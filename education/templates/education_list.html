@@ -1,0 +1,116 @@
+{% extends 'ddac_application/templates/base.html' %}
+{%load static%}
+{%block content%}      
+<!-- Start Section -->
+      <section class="container py-5">
+          <div class="row text-center pt-5 pb-3">
+              <div class="col-lg-10 m-auto">
+                  <h1 class="h1">Educational Resource</h1>
+                  <p class="mt-3">
+                      Welcome to the Educational Resources section of Eco Cycle! Here, we aim to empower individuals with knowledge and information to foster a more sustainable and environmentally conscious lifestyle. Our educational resources cover a wide range of topics related to food sharing and sustainable marketplace practices, providing valuable insights, practical tips, and informative articles.
+
+                    In this section, you will find a wealth of educational materials designed to educate, inspire, and engage our community in the journey towards sustainability. From articles exploring the benefits of food sharing to guides on navigating the sustainable marketplace, we strive to equip you with the tools and resources needed to make informed choices that benefit both the planet and its inhabitants.
+
+                    Whether you're looking to learn more about reducing food waste, supporting ethical consumption, or discovering innovative solutions for sustainable living, our educational resources are here to guide you every step of the way. Join us as we explore the interconnectedness of food sharing and sustainable marketplace practices and work towards creating a healthier, more resilient future for all.
+                  </p>
+              </div>
+          </div>
+      </section>
+      <!-- End Section -->
+
+      <section class="container py-5 bg-light rounded mb-5">
+          <h1 class="h1">Articles</h1>
+          <p>Explore a variety of articles covering essential topics related to sustainability and waste reduction.</p>
+              <div id="accordion">
+                  <ul class="list-unstyled">
+                    <li class="card mb-2">
+                      <div class="card-header" id="headingOne">
+                        <h5 class="mb-0">
+                          <button class="btn" id="h3" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            Tips for Reducing Food Waste
+                          </button>
+                        </h5>
+                      </div>
+                      <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-bs-parent="#accordion">
+                        <div class="card-body">
+                          <!-- Content for Tips for Reducing Food Waste -->
+                          Learn practical tips and strategies to minimize food waste in your household.
+                          Examples:
+                          <ul>
+                            <li>Store perishable items properly to extend their shelf life.</li>
+                            <li>Plan meals and use leftovers creatively to avoid throwing away food.</li>
+                            <li>Compost food scraps instead of sending them to landfills.</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </li>
+                    <li class="card mb-2">
+                      <div class="card-header" id="headingTwo">
+                        <h5 class="mb-0">
+                          <button class="btn  collapsed" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            Common Recycling Mistakes and How to Avoid Them
+                          </button>
+                        </h5>
+                      </div>
+                      <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-bs-parent="#accordion">
+                        <div class="card-body">
+                          <!-- Content for Common Recycling Mistakes and How to Avoid Them -->
+                          Identify common mistakes people make when recycling and learn how to recycle correctly to reduce contamination.
+                          Examples:
+                          <ul>
+                            <li>Avoid putting plastic bags and tanglers (e.g., hoses, cords) in recycling bins.</li>
+                            <li>Rinse containers before recycling to prevent contamination.</li>
+                            <li>Check local recycling guidelines for specific instructions on recyclable materials.</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </li>
+                    <li class="card mb-2">
+                      <div class="card-header" id="headingThree">
+                        <h5 class="mb-0">
+                          <button class="btn  collapsed" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            Sustainable Living: Eco-Friendly Practices for Everyday Life
+                          </button>
+                        </h5>
+                      </div>
+                      <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-bs-parent="#accordion">
+                        <div class="card-body">
+                          <!-- Content for Sustainable Living: Eco-Friendly Practices for Everyday Life -->
+                          Discover eco-friendly practices that you can incorporate into your daily life to reduce your environmental footprint.
+                          Examples:
+                          <ul>
+                            <li>Use reusable bags and containers instead of single-use plastics.</li>
+                            <li>Opt for energy-efficient appliances and LED lighting to conserve energy.</li>
+                            <li>Choose products with minimal packaging and eco-friendly certifications.</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </li>
+                    <li class="card mb-2">
+                      <div class="card-header" id="headingFour">
+                        <h5 class="mb-0">
+                          <button class="btn  collapsed" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                            Understanding the Impact of Single-Use Plastics
+                          </button>
+                        </h5>
+                      </div>
+                      <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-bs-parent="#accordion">
+                        <div class="card-body">
+                          <!-- Content for Understanding the Impact of Single-Use Plastics -->
+                          Explore the environmental consequences of single-use plastics and learn about initiatives to reduce their usage.
+                          Examples:
+                          <ul>
+                            <li>Plastic pollution in oceans and its harmful effects on marine life.</li>
+                            <li>Recycling challenges and limited effectiveness in addressing plastic waste.</li>
+                            <li>Alternatives to single-use plastics and policies promoting their reduction.</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                
+                
+      </section>
+<!--End Brands-->
+{%endblock content%}

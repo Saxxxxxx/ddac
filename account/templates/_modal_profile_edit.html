@@ -1,0 +1,17 @@
+{%load crispy_forms_tags%}
+
+
+<form method="POST" class="modal-header">
+    {% csrf_token %}
+    <div class="modal-header">
+        <h5 class="modal-title" id="createListingModalLabel">Modify Profile</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        {{ edit_profile_form|crispy }}
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="saveChanges" name="save_profile">Save changes</button>
+    </div>
+</form>

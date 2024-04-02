@@ -1,0 +1,105 @@
+{% extends 'ddac_application/templates/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-md-4">
+            <!-- Profile Card -->
+            <div class="card">
+                <img src="https://via.placeholder.com/150" class="card-img-top" alt="Profile Picture">
+                <div class="card-body">
+                    <h5 class="card-title">John Doe</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <!-- User Details -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">User Details <button class="btn btn-primary btn-sm float-right mt-3" data-bs-toggle="modal" data-bs-target="#editModal"
+                        data-field="username">Edit</button></h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Username: JohnDoe</li>
+                        <li class="list-group-item">Name: John Doe</li>
+                        <li class="list-group-item">Email: johndoe@example.com</li>
+                        <li class="list-group-item">Location: New York, USA</li>
+                    </ul>
+                    <!-- Edit Button -->
+                </div>
+            </div>
+
+            <!-- Listings Tables -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">Sustainable Marketplace</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Sustainable Marketplace</h6>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Populate table rows with listings from Sustainable Marketplace -->
+                            <tr>
+                                <td>1</td>
+                                <td>Listing 1</td>
+                                <td>Description of Listing 1</td>
+                                <td>
+                                    <button class="btn btn-primary btn-sm">Edit</button>
+                                    <button class="btn btn-danger btn-sm">Delete</button>
+                                </td>
+                            </tr>
+                            <!-- Add more rows for other listings -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- End Listings Tables -->
+            <!-- Listings Tables -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">Food Sharing Listing</h5>    
+                    <h6 class="card-subtitle mb-2 mt-4 text-muted">Food Sharing Hub</h6>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Populate table rows with listings from Food Sharing Hub -->
+                            <tr>
+                                <td>1</td>
+                                <td>Listing 1</td>
+                                <td>Description of Listing 1</td>
+                                <td>
+                                    <button class="btn btn-primary btn-sm">Edit</button>
+                                    <button class="btn btn-danger btn-sm">Delete</button>
+                                </td>
+                            </tr>
+                            <!-- Add more rows for other listings -->
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Create Listing -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        {%include '_modal_profile_edit.html'%}
+    </div>
+</div>
+
+{% endblock content %}

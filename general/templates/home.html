@@ -1,0 +1,76 @@
+{% extends 'ddac_application/templates/base.html' %}
+{%load static%}
+
+{% block content %}
+<div id="template-mo-zay-hero-carousel" class="carousel slide" data-bs-ride="carousel">
+    <ol class="carousel-indicators">
+        <li data-bs-target="#template-mo-zay-hero-carousel" data-bs-slide-to="0" class="active"></li>
+        <li data-bs-target="#template-mo-zay-hero-carousel" data-bs-slide-to="1"></li>
+        <li data-bs-target="#template-mo-zay-hero-carousel" data-bs-slide-to="2"></li>
+    </ol>
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <div class="container">
+                <div class="row p-5">
+                    <div class="mx-auto col-md-8 col-lg-6 order-lg-last">
+                        <img class="img-fluid" src="{% static 'img/food-sharing.png' %}" alt="">
+                    </div>
+                    <div class="col-lg-6 mb-0 d-flex align-items-center">
+                        <div class="text-align-left align-self-center">
+                            <h1 class="h1 text-success"><b>Eco Cycle</b></h1>
+                            <h3 class="h2">Food Sharing Hub</h3>
+    <p>
+        The Food Sharing Hub enables users to share surplus food items within the community. It provides a platform for listing available food items for donation and allows users to browse and request items for pickup. With intuitive search and filter options, creating listings with details, and a contact form for easy communication, the Food Sharing Hub promotes sustainability by facilitating the redistribution of surplus food.
+    </p>
+
+                        </div>                            
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="container">
+                <div class="row p-5">
+                    <div class="mx-auto col-md-8 col-lg-6 order-lg-last">
+                        <img class="img-fluid" src="{% static 'img/sustainability.png'%}" alt="">
+                    </div>
+                    <div class="col-lg-6 mb-0 d-flex align-items-center">
+                        <div class="text-align-left">
+                            <h1 class="h1">Sustainable Marketplace</h1>
+                            <h3 class="h2">Marketplace that is sustainable</h3>
+    <p>
+        The Sustainable Marketplace serves as a platform for buying, selling, or exchanging second-hand and upcycled goods. Users can list their products with images and descriptions, making it easy for others to browse and find sustainable alternatives. With search and filter capabilities, as well as a simple checkout or contact process, the Sustainable Marketplace encourages eco-friendly consumption and promotes the reuse of goods, contributing to a more sustainable future.
+    </p>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="container">
+                        <div class="row p-5">
+                            <div class="mx-auto col-md-8 col-lg-6 order-lg-last">
+                                <img class="img-fluid" src="{% static 'img/education.png' %}" alt="">
+                            </div>
+                            <div class="col-lg-6 mb-0 d-flex align-items-center">
+                                <div class="text-align-left">
+                                    <h1 class="h1">Educational Resources</h1>
+                                    <h3 class="h2">Educational information on food sharing and recycling</h3>
+    <p>
+        Our Educational Resources section offers a wealth of knowledge on reducing waste, recycling correctly, and living sustainably. From informative articles to practical tips and guides, users can explore various topics aimed at promoting environmentally friendly practices. With a blog-style format, categorized posts, and tags for easy navigation, our Educational Resources empower individuals to make informed decisions and adopt sustainable lifestyles.
+    </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a class="carousel-control-prev text-decoration-none w-auto ps-3" href="#template-mo-zay-hero-carousel" role="button" data-bs-slide="prev">
+        <i class="fas fa-chevron-left"></i>
+    </a>
+    <a class="carousel-control-next text-decoration-none w-auto pe-3" href="#template-mo-zay-hero-carousel" role="button" data-bs-slide="next">
+        <i class="fas fa-chevron-right"></i>
+    </a>
+</div>
+{% endblock content %}

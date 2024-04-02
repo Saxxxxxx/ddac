@@ -1,0 +1,154 @@
+{% extends 'ddac_application/templates/base.html' %}
+
+{%load static%}
+
+{%block content%}
+<!-- Start Content -->
+<div class="container py-5">
+    <div class="row">
+
+        <div class="col-lg-3">
+            <h1 class="h2 pb-4">Categories</h1>
+            <ul class="list-unstyled templatemo-accordion">
+                <li class="pb-3">
+                    <a class="collapsed d-flex justify-content-between h3 text-decoration-none" href="#">
+                        Location
+                        <i class="fa fa-fw fa-chevron-circle-down mt-1"></i>
+                    </a>
+                    <ul class="collapse show list-unstyled pl-3">
+                        <li><a class="text-decoration-none" href="#">Kuala Lumpur</a></li>
+                        <li><a class="text-decoration-none" href="#">Selangor</a></li>
+                        <li><a class="text-decoration-none" href="#">Penang</a></li>
+                        <li><a class="text-decoration-none" href="#">Sabah</a></li>
+                        <li><a class="text-decoration-none" href="#">Sarawak</a></li>
+                        <li><a class="text-decoration-none" href="#">Perak</a></li>
+                    </ul>
+                </li>
+                <li class="pb-3">
+                    <a class="collapsed d-flex justify-content-between h3 text-decoration-none" href="#">
+                        Categories
+                        <i class="pull-right fa fa-fw fa-chevron-circle-down mt-1"></i>
+                    </a>
+                    <ul id="collapseTwo" class="collapse list-unstyled pl-3">
+                        <li><a class="text-decoration-none" href="#">Clothing and Apparel</a></li>
+                        <li><a class="text-decoration-none" href="#">Home and Living</a></li>
+                        <li><a class="text-decoration-none" href="#">Outdoor and Adventure</a></li>
+                        <li><a class="text-decoration-none" href="#">Toys and Games</a></li>
+                        <li><a class="text-decoration-none" href="#">Books and Media</a></li>
+                    </ul>
+                </li>
+                <li class="pb-3">
+                    <a class="collapsed d-flex justify-content-between h3 text-decoration-none" href="#">
+                        Status
+                        <i class="pull-right fa fa-fw fa-chevron-circle-down mt-1"></i>
+                    </a>
+                    <ul id="collapseThree" class="collapse list-unstyled pl-3">
+                        <li><a class="text-decoration-none" href="#">Available</a></li>
+                        <li><a class="text-decoration-none" href="#">Sold</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="col-lg-9">
+            <div class="row">
+                <div class="col-md-6">
+                    <button type="button" class="btn btn-success mt-2" data-bs-toggle="modal" data-bs-target="#createSustainableListingModal" id="openSustainableList">Create A Listing</button>
+                </div>
+<div class="col-md-6">
+    <div class="pb-4 d-flex justify-content-end"> <!-- Use flex utilities to align the dropdown to the end -->
+        <div class="d-flex align-items-center">
+            Sort By &nbsp;
+            <select class="form-control" style="width:60%">
+                <option>Alphabetical</option>
+                <option>Status</option>
+            </select>
+        </div>
+    </div>
+</div>
+            </div>
+            <div class="row">
+                <div class="row border-end shadow-sm shadow-md-md shadow-lg-lg shadow-xl-xl shadow-xxl-xxl mb-3">
+                    <div class="col-md-2">
+                        <img class="card-img rounded-0 img-fluid" src="{% static 'img/shop_08.jpg'%}" style="width:10rem">
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card-body">
+                            <a href="shop-single.html" class="h3 text-decoration-none">Product Title</a>
+                            <p class="card-text">Product Description Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at quam in magna consequat bibendum non ac metus. Vestibulum at vestibulum justo.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <ul class="list-unstyled d-flex justify-content-between mb-0">
+                            <li>Location: City, Country</li>
+                            <li>Created by: John Doe</li>
+                            <li>Status: Available/Out of stock</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="row border-end shadow-sm shadow-md-md shadow-lg-lg shadow-xl-xl shadow-xxl-xxl mb-3">
+                    <div class="col-md-2">
+                        <img class="card-img rounded-0 img-fluid" src="{% static 'img/shop_08.jpg'%}" style="width:10rem">
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card-body">
+                            <a href="shop-single.html" class="h3 text-decoration-none">Product Title</a>
+                            <p class="card-text">Product Description Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at quam in magna consequat bibendum non ac metus. Vestibulum at vestibulum justo.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <ul class="list-unstyled d-flex justify-content-between mb-0">
+                            <li>Location: City, Country</li>
+                            <li>Created by: John Doe</li>
+                            <li>Status: Available/Out of stock</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="row border-end shadow-sm shadow-md-md shadow-lg-lg shadow-xl-xl shadow-xxl-xxl mb-3">
+                    <div class="col-md-2">
+                        <img class="card-img rounded-0 img-fluid" src="{% static 'img/shop_08.jpg'%}" style="width:10rem">
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card-body">
+                            <a href="shop-single.html" class="h3 text-decoration-none">Product Title</a>
+                            <p class="card-text">Product Description Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at quam in magna consequat bibendum non ac metus. Vestibulum at vestibulum justo.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <ul class="list-unstyled d-flex justify-content-between mb-0">
+                            <li>Location: City, Country</li>
+                            <li>Created by: John Doe</li>
+                            <li>Status: Available/Out of stock</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                
+            </div>
+            <div div="row">
+                <ul class="pagination pagination-lg justify-content-end">
+                    <li class="page-item disabled">
+                        <a class="page-link active rounded-0 mr-3 shadow-sm border-top-0 border-left-0" href="#" tabindex="-1">1</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link rounded-0 mr-3 shadow-sm border-top-0 border-left-0 text-dark" href="#">2</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link rounded-0 shadow-sm border-top-0 border-left-0 text-dark" href="#">3</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- End Content -->
+
+    <!-- Modal for Create Listing -->
+<div class="modal fade" id="createSustainableListingModal" tabindex="-1" role="dialog" aria-labelledby="createSustainableListingModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+    {%include '_modal_create_sustainable.html'%}
+</div>
+</div>
+<!--End Brands-->
+{%endblock content%}
