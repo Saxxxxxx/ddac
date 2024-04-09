@@ -1,0 +1,129 @@
+{% extends 'ddac_application/templates/admin_base.html' %}
+{%load static%}
+{%block content%}
+<div class="container mt-5">
+    <h2 class="mb-4">Manage Unapproved Users</h2>
+    <input type="text" id="searchInput" class="form-control mb-3" placeholder="Search users...">
+    <!-- <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addUserModal">Add User</button> -->
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="userTableBody">
+                {%for user in users%}
+                <tr>
+                    <td>{{user.id}}</td>
+                    <td>{{user.first_name}}</td>
+                    <td>{{user.last_name}}</td>
+                    <td>{{user.username}}</td>
+                    <td>{{user.email}}</td>
+                    <td>
+                        <div class="row"> <!-- Add margin-top for spacing between buttons -->
+                            <div class="col text-center">
+                                <button class="btn btn-sm btn-success approve-btn" style="width: 100px;" data-bs-toggle="modal" id="approveBtn" data-bs-target="#approveConfirmationModal" data-listing-id="{{ user.id }}">Approve</button>
+                            </div>
+                        </div>
+                        <div class="row mt-2 justify-content-center">
+                            <div class="col text-center">
+                                <button class="btn btn-sm btn-danger reject-btn" style="width: 100px;" data-bs-toggle="modal" id="rejectBtn" data-bs-target="#rejectConfirmationModal" data-listing-id="{{ user.id }}">Reject</button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {%endfor%}
+                <!-- Populate table rows with detailed user data dynamically -->
+                <!-- Add more rows for other users -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<div id="rejectConfirmationModal" class="modal fade" tabindex="-1">
+    <div id="dialog" class="modal-dialog">
+        <form method="POST" class="modal-content">
+            {% csrf_token %} 
+            <div class="modal-header">
+              <h2>Confirm Reject</h2>
+            </div> 
+            <div class="modal-body">
+                Are you sure you want to reject this user?
+                <div class="form-group m-3" style="display:none">
+                    <input name="user_id" type="text" id="rejectUserId" class="form-control" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-danger" name="rejectUser">Reject</button>
+            </div>
+          </form>
+    </div>
+</div>
+
+<div id="approveConfirmationModal" class="modal fade" tabindex="-1">
+    <div id="dialog" class="modal-dialog">
+        <form method="POST" class="modal-content">
+            {% csrf_token %} 
+            <div class="modal-header">
+              <h2>Confirm Approval</h2>
+            </div> 
+            <div class="modal-body">
+                Are you sure you want to approve this user?
+                <div class="form-group m-3" style="display:none">
+                    <input name="user_id" type="text" id="approveUserId" class="form-control" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-success" name="approveUser">Approve</button>
+            </div>
+          </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const approveButtons = document.querySelectorAll('.approve-btn');
+    approveButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const itemId = button.getAttribute('data-listing-id');
+            document.getElementById('approveUserId').value = itemId;
+            console.log(document.getElementById('rejectUserInput').value)
+        });
+    });
+    const rejectButtons = document.querySelectorAll('.reject-btn');
+    rejectButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const itemId = button.getAttribute('data-listing-id');
+            console.log(itemId)
+            document.getElementById('rejectUserId').value = itemId;
+        });
+    });
+    // Get the modal element
+    const approveConfirmationModal = document.getElementById('approveConfirmationModal');
+
+    // Listen for the modal's "hidden.bs.modal" event
+    approveConfirmationModal.addEventListener('hidden.bs.modal', function () {
+        // Reset the input field value
+        document.getElementById('approveUserId').value = '';
+    });
+
+    // Get the modal element
+    const rejectConfirmationModal = document.getElementById('rejectConfirmationModal');
+
+    // Listen for the modal's "hidden.bs.modal" event
+    rejectConfirmationModal.addEventListener('hidden.bs.modal', function () {
+        // Reset the input field value
+        document.getElementById('rejectUserId').value = '';
+    });
+})
+</script>
+{%endblock content%}

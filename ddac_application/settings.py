@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'sustainable',
     'crispy_forms',
     'crispy_bootstrap5',
+    'storages',
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
@@ -87,18 +88,28 @@ WSGI_APPLICATION = 'ddac_application.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+##LOCAL DATABASE
+# DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#             'NAME': 'postgres',
+#             'USER': 'admin',
+#             'PASSWORD': '',
+#             'HOST': 'localhost',
+#             'PORT': '5440',
+#     }
+# }
 
 DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'postgres',
-            'USER': 'admin',
-            'PASSWORD': '',
-            'HOST': 'localhost',
-            'PORT': '5440',
+            'NAME': 'ddac_db',
+            'USER': 'ddac_admin',
+            'PASSWORD': 'password',
+            'HOST': 'ddacdb.c52e4ck2g5ru.us-east-1.rds.amazonaws.com',
+            'PORT': '5432',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -149,4 +160,24 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = 'home'
-LOGOUT_REDIRECT_URL = 'login'
+LOGOUT_REDIRECT_URL = 'custom_login_page'
+
+
+AWS_ACCESS_KEY_ID = 'ASIAU6GDY54H4PTJUO6W'
+AWS_SECRET_ACCESS_KEY = '9hE42//fCCJMbcBUsZScqhfqjr2wS62H33dsybYS'
+AWS_SESSION_TOKEN='IQoJb3JpZ2luX2VjENv//////////wEaCXVzLXdlc3QtMiJGMEQCIDJJca6MhUr5vKCu5rQXZHU0F7vlHinQSH/HDokj9MSwAiB0+dYud1IMR8AhbTU65TaerfkPCkqne8df1zJa8xIL7yqkAggUEAAaDDMzOTcxMjk5NTA4NyIMsDKw9CV2L3TE8LbWKoECn0VE4rzSIiFOD+idBXMSFgPRCi7gvU2D+FqiuAiLHh1pk4QebGn3Of3x1ti2CeDpMkBhWGqrUCSxEkp6Kgqe7U0Y/6YmCYfNkUBRy+sjPaTEVAyJ6V2swO4ioQeQRAo5mJIWgxLsgoMfOXSYHG/+fIAlWD55UCuazIas6LTSA6WQrPKJb3jOakkmDBi/LxC8BLgd+tXizk5Om30xxpcGasX/EjgSi2vYkFaUE6A6TZ9iLtAS49hclBkKvGn9eDZuhRVO+OmwNVr4iVi4Ve+MPN0qt3su8+oRxSexysSklrN7A6OP13ADqDYWvh7AU1yvQZVTOAecf3xFW7abpciVnhgwn8HUsAY6ngFgbH+zK8qKRYOgw5CZ6VUiXjU2Szksm6m2bvil8smcbrRPRBIw9BRweQLa0eqjjhGoX/+XNSuUn3/+CqILIIWpiFxtZcBwBlyYTBmx+zXWmK7WaiFEjRg15HDsRV7h8Z0XU6GhmqjlbgOUxOI9xkLpb5n1uKNVPEAgV9yCG7I0Olv6JwuGm09uZMlzvI19qhPao7Z0SkE7/JxC/VY8MQ=='
+AWS_STORAGE_BUCKET_NAME = 'ddac-bucket'
+AWS_S3_REGION_NAME = 'us-east-1'  # e.g., us-east-1
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+
+# For serving static files directly from S3
+AWS_S3_URL_PROTOCOL = 'https:'
+AWS_S3_USE_SSL = True
+AWS_S3_VERIFY = True
+
+# Static and media file configuration
+# STATIC_URL = f'{AWS_S3_URL_PROTOCOL}://{AWS_S3_CUSTOM_DOMAIN}/static/'
+# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+MEDIA_URL = f'{AWS_S3_URL_PROTOCOL}://{AWS_S3_CUSTOM_DOMAIN}/media/'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'

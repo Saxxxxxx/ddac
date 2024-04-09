@@ -1,0 +1,158 @@
+{% extends 'ddac_application/templates/admin_base.html' %}
+{%load static%}
+{% load crispy_forms_tags %}
+{%block content%}
+<div class="container mt-5">
+    <h2 class="mb-4">Manage Articles</h2>
+    <input type="text" id="searchInput" class="form-control mb-3" placeholder="Search articles...">
+    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createArticleModal">Create Articles</button>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th class="title-column">Title</th>
+                <th class="content-column">Content</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="articleTableBody">
+            <!-- Dynamic table rows will be appended here -->
+            {% for header in headers %}
+            <tr>
+                <td>{{ header.article_header_content }}</td>
+                <td>{{ header.article_body_id.article_body_content }}</td>
+                <td>
+                    <div class="row"> <!-- Add margin-top for spacing between buttons -->
+                        <div class="col text-center">
+                            <button class="btn btn-sm btn-info modify-btn" style="width: 100px;" data-bs-toggle="modal" id="modifyBtn" data-bs-target="#modifyArticleModal" data-listing-id="{{ header.article_header_id }}">Modify</button>
+                        </div>
+                    </div>
+                    <div class="row mt-2 justify-content-center">
+                        <div class="col text-center">
+                            <button class="btn btn-sm btn-danger delete-btn" style="width: 100px;" data-bs-toggle="modal" id="deleteBtn" data-bs-target="#deleteConfirmationModal" data-listing-id="{{ header.article_header_id }}">Delete</button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+</div>
+<!-- Create Modal -->
+<!-- Add Listing Modal -->
+<!-- Add User Modal -->
+<div id="createArticleModal" class="modal fade" tabindex="-1">
+    <div id="dialog" class="modal-dialog">
+        <form method="POST" class="modal-content" enctype="multipart/form-data"> 
+            {% csrf_token %} 
+            <div class="modal-header">
+              <h2>Create Article</h2>
+            </div> 
+            <div class="modal-body">
+              {{ educationForm|crispy }}
+            </div>
+            <div class="modal-footer">
+              <button name="createArticleBtn" type="submit" class="btn btn-primary">Create</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+          </form>
+    </div>
+</div>
+
+
+<!-- Editing Modal -->
+<div class="modal" id="modifyArticleModal" tabindex="-1">
+    <div id="dialog" class="modal-dialog">
+        <form method="POST" class="modal-content">
+            {% csrf_token %} 
+            <div class="modal-header">
+                <h2>Edit Article</h2>
+            </div>
+            <div class="modal-body">
+                <div class="form-group m-3">
+                    <label>ID</label>
+                    <input type="text" class="form-control" id="modalArticleId" name="article_id" placeholder="Enter title" readonly>
+                </div>
+                <div class="form-group m-3">
+                    <label>Title</label>
+                    <input type="text" class="form-control" id="modalArticleTitle" name="title" placeholder="Enter title">
+                </div>
+                <div class="form-group m-3">
+                    <label>Description</label>
+                    <textarea class="form-control" id="modalArticleDescription" rows="5" placeholder="Enter description" name="description"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" name="modifyArticle">Save changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- Delete Modal -->
+<div id="deleteConfirmationModal" class="modal fade" tabindex="-1">
+    <div id="dialog" class="modal-dialog">
+        <form method="POST" class="modal-content">
+            {% csrf_token %} 
+            <div class="modal-header">
+              <h2>Confirm Deletion</h2>
+            </div> 
+            <div class="modal-body">
+                Are you sure you want to delete this item?
+                <div class="form-group m-3" style="display:none;">
+                    <input name="article_id" type="text" id="deleteArticleId"
+                        class="form-control" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-danger" name="deleteArticle">Delete</button>
+            </div>
+          </form>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const modifyButtons = document.querySelectorAll('.modify-btn');
+        modifyButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const itemId = button.getAttribute('data-listing-id');
+                console.log(itemId)
+                getArticle(itemId);
+            });
+        });
+        const deleteButtons = document.querySelectorAll('.ban-btn');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const itemId = button.getAttribute('data-listing-id');
+                console.log(itemId)
+                document.getElementById('deleteArticleId').value = itemId;
+            });
+        });
+    });
+
+    function getArticle(articleId) {
+        fetch(`/get-article-data/?article_id=${articleId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Update UI with listing data
+                if (data.article_data) {
+                    console.log(data.article_data)
+                    document.getElementById('modalArticleId').value = data.article_data.article_id;
+                    document.getElementById('modalArticleTitle').value = data.article_data.article_header_content;
+                    document.getElementById('modalArticleDescription').value = data.article_data.article_body_content;
+                } else {
+                    console.error('Listing not found:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching listing data:', error);
+            });
+    }
+</script>
+{%endblock content%}

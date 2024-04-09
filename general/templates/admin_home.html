@@ -1,0 +1,110 @@
+{% extends 'ddac_application/templates/admin_base.html' %}
+
+{%load static%}
+{%block content%}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">User Activity</h1>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="chart-container">
+                <h3 class="text-center mb-3">Food Sharing</h3>
+                <!-- Food Sharing Chart Canvas -->
+                <canvas id="foodChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="chart-container">
+                <h3 class="text-center mb-3">Sustainable Marketplace</h3>
+                <!-- Sustainable Marketplace Chart Canvas -->
+                <canvas id="sustainableChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <div class="chart-container">
+                <h3 class="text-center mb-3">User Status</h3>
+                <!-- User Status Chart Canvas -->
+                <canvas id="userChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{% static 'js/chart.umd.js' %}"></script>
+<script>
+    function createChart(ctx, chartData, chartType) {
+        return new Chart(ctx, {
+            type: chartType,
+            data: chartData,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                        
+                    }
+                }
+            }
+        });
+    }
+    // Function to prepare chart data for food and sustainable categories
+    function prepareChartData(data) {
+        const labels = data.map(item => item.category_name);
+        const counts = data.map(item => item.listing_count);
+        return {
+            labels: labels,
+            datasets: [{
+                label: 'Number of List',
+                data: counts,
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        };
+    }
+    
+    // Function to prepare chart data for user category
+    function prepareUserData(data) {
+        const labels = ['Active Users', 'Banned Users', 'Non-Approved Users'];
+        const counts = [data.number_of_active_user, data.number_of_banned_user, data.number_of_non_approved_user];
+        return {
+            labels: labels,
+            datasets: [{
+                label: 'User Count',
+                data: counts,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.5)',
+                    'rgba(54, 162, 235, 0.5)',
+                    'rgba(255, 206, 86, 0.5)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)'
+                ],
+                borderWidth: 1
+            }]
+        };
+    }
+    // Fetch the chart data from Django view and parse it
+    var foodData = {% autoescape off %}{{ food_chart_data }}{% endautoescape %};
+    var sustainableData = {% autoescape off %}{{  sustainable_chart_data }}{% endautoescape %};
+    var userData = {% autoescape off %}{{  user_chart_data }}{% endautoescape %};
+
+    // Get canvas elements
+    const foodCtx = document.getElementById('foodChart').getContext('2d');
+    createChart(foodCtx, prepareChartData(sustainableData.listings_by_category), 'bar');
+
+    const sustainableCtx = document.getElementById('sustainableChart').getContext('2d');
+    createChart(sustainableCtx, prepareChartData(foodData.listings_by_category), 'bar');
+
+    const userCtx = document.getElementById('userChart').getContext('2d');
+    createChart(userCtx, prepareUserData(userData), 'bar');
+
+</script>
+{% comment %} <script src="{% static 'js/your_js_file.js' %}"></script>
+<script src="{% static 'js/your_js_file.js' %}"></script>
+<script src="{% static 'js/your_js_file.js' %}"></script>
+<script src="{% static 'js/your_js_file.js' %}"></script>
+<script src="{% static 'js/your_js_file.js' %}"></script>
+<script src="{% static 'js/your_js_file.js' %}"></script> {% endcomment %}
+{% endblock content %}

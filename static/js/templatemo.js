@@ -56,6 +56,15 @@ $(document).ready(function() {
 
 });
 
+$(document).ready(function() {
+  // Close modal when clicking outside of it
+  $(document).on('click', function(e) {
+    if ($(e.target).hasClass('modal')) {
+      $('#myModal').modal('hide');
+    }
+  });
+});
+
 function attachModalToButton(buttonId, modalId) {
   const button = document.getElementById(buttonId);
 
@@ -71,3 +80,4 @@ function attachModalToButton(buttonId, modalId) {
 }
 
 attachModalToButton('openFoodList', 'createFoodListingModal');
+attachModalToButton('openSustainableList', 'createSustainableListingModal');
