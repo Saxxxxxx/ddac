@@ -103,10 +103,10 @@ WSGI_APPLICATION = 'ddac_application.wsgi.application'
 DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'ddac_db',
-            'USER': 'ddac_admin',
-            'PASSWORD': 'password',
-            'HOST': 'ddacdb.c52e4ck2g5ru.us-east-1.rds.amazonaws.com',
+            'NAME': 'sustainabledb',
+            'USER': 'cloudadmin',
+            'PASSWORD': '12345678',
+            'HOST': 'clouddb.c1ykq6y6m32e.us-east-1.rds.amazonaws.com',
             'PORT': '5432',
     }
 }
@@ -163,21 +163,21 @@ LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'custom_login_page'
 
 
-AWS_ACCESS_KEY_ID = 'ASIAU6GDY54H4PTJUO6W'
-AWS_SECRET_ACCESS_KEY = '9hE42//fCCJMbcBUsZScqhfqjr2wS62H33dsybYS'
-AWS_SESSION_TOKEN='IQoJb3JpZ2luX2VjENv//////////wEaCXVzLXdlc3QtMiJGMEQCIDJJca6MhUr5vKCu5rQXZHU0F7vlHinQSH/HDokj9MSwAiB0+dYud1IMR8AhbTU65TaerfkPCkqne8df1zJa8xIL7yqkAggUEAAaDDMzOTcxMjk5NTA4NyIMsDKw9CV2L3TE8LbWKoECn0VE4rzSIiFOD+idBXMSFgPRCi7gvU2D+FqiuAiLHh1pk4QebGn3Of3x1ti2CeDpMkBhWGqrUCSxEkp6Kgqe7U0Y/6YmCYfNkUBRy+sjPaTEVAyJ6V2swO4ioQeQRAo5mJIWgxLsgoMfOXSYHG/+fIAlWD55UCuazIas6LTSA6WQrPKJb3jOakkmDBi/LxC8BLgd+tXizk5Om30xxpcGasX/EjgSi2vYkFaUE6A6TZ9iLtAS49hclBkKvGn9eDZuhRVO+OmwNVr4iVi4Ve+MPN0qt3su8+oRxSexysSklrN7A6OP13ADqDYWvh7AU1yvQZVTOAecf3xFW7abpciVnhgwn8HUsAY6ngFgbH+zK8qKRYOgw5CZ6VUiXjU2Szksm6m2bvil8smcbrRPRBIw9BRweQLa0eqjjhGoX/+XNSuUn3/+CqILIIWpiFxtZcBwBlyYTBmx+zXWmK7WaiFEjRg15HDsRV7h8Z0XU6GhmqjlbgOUxOI9xkLpb5n1uKNVPEAgV9yCG7I0Olv6JwuGm09uZMlzvI19qhPao7Z0SkE7/JxC/VY8MQ=='
-AWS_STORAGE_BUCKET_NAME = 'ddac-bucket'
-AWS_S3_REGION_NAME = 'us-east-1'  # e.g., us-east-1
-AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+AWS_ACCESS_KEY_ID = 'ASIA47CRYXX3H5XKPCPG'
+AWS_SECRET_ACCESS_KEY = '4zvxwkkhQAhJu1VCikyR8M9VS6qQt70m4gr5L8TX'
+AWS_SESSION_TOKEN='IQoJb3JpZ2luX2VjEBIaCXVzLXdlc3QtMiJHMEUCIE7KDVq70dMjYhDereKaE0fvjsPicrejU/jNO7V3e0GSAiEAwFgV7vPFPszSITGVW0o0gl/tKjc8lGoQySuMeJ3Q8f8qsgIISxAAGgw4OTEzNzcyMDQ3MjYiDAonhj1J1V3oEyftTSqPAogqec5eVO1+LopQsRC/ndENTkLAGMtIjnM2bJbAEjn2vA98cFeFGdDkBQjRSQWre5pAPAp3YGTUZw/SBVA1MlhBQOIsY9RnvgSduPyPVvBQleVsPEsW6NNGetJDMs8m7KDCP6V84evxxARMiWYJY8xFLwnhtc6od37tzjG2wsncJVNMzB/86yRmcJXTFLT9ZHnmSNVwQoZJ6Bczz08Igqc+7Vy+9SlWSIjDWYus2Y01JhoyvvxOqCFVlAbD9OWxbPwTCrgPiUltKxY2pM7kz9tRUYD5t3olChn68Odz1dOsDNXPe5Gxh792R/b3IT/lb9cDyptPSlxXk5rr5e6usi0JI+xW0lmytDFyf8Ne/C8wp7zgsAY6nQHcDR3ZHlFmKtH2I/bxuOije0+Z1SMpP9DC7QvA4rTVsWUsuEiU6jGC5Vv5dmHxLO0Fjt4ywarJi7aC0v6BZBuBszjVseveTuvzB3eF96uD+HPRG8IYCrPOMf+u5/d+JHEzNmoS22rhvdH4nbW0m/K36x5u/vc/GEFA5GUQovHYtHqfvUBwT/MT9DFrlFEzOcb5TU1YbomPsAW/7iuw'
+# AWS_STORAGE_BUCKET_NAME = 'ddac-bucket'
+# AWS_S3_REGION_NAME = 'us-east-1'  # e.g., us-east-1
+# AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 
-# For serving static files directly from S3
-AWS_S3_URL_PROTOCOL = 'https:'
-AWS_S3_USE_SSL = True
-AWS_S3_VERIFY = True
+# # For serving static files directly from S3
+# AWS_S3_URL_PROTOCOL = 'https:'
+# AWS_S3_USE_SSL = True
+# AWS_S3_VERIFY = True
 
-# Static and media file configuration
-# STATIC_URL = f'{AWS_S3_URL_PROTOCOL}://{AWS_S3_CUSTOM_DOMAIN}/static/'
-# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# # Static and media file configuration
+# # STATIC_URL = f'{AWS_S3_URL_PROTOCOL}://{AWS_S3_CUSTOM_DOMAIN}/static/'
+# # STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-MEDIA_URL = f'{AWS_S3_URL_PROTOCOL}://{AWS_S3_CUSTOM_DOMAIN}/media/'
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# MEDIA_URL = f'{AWS_S3_URL_PROTOCOL}://{AWS_S3_CUSTOM_DOMAIN}/media/'
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'

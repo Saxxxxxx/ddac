@@ -15,12 +15,13 @@
         </div>
         <div class="col-md-8">
             <!-- User Details -->
+            {%for user in users%}
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">User Details <button class="btn btn-primary btn-sm float-right mt-3" data-bs-toggle="modal" data-bs-target="#editModal"
                         data-field="username">Edit</button></h5>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Username: JohnDoe</li>
+                        <li class="list-group-item">Username: {{user.first_name}}</li>
                         <li class="list-group-item">Name: John Doe</li>
                         <li class="list-group-item">Email: johndoe@example.com</li>
                         <li class="list-group-item">Location: New York, USA</li>

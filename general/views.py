@@ -13,6 +13,9 @@ def home(request):
 def about_us(request):
     return render(request,'about.html')
 
+def profile(request):
+    return render(request,'profile.html')
+
 @staff_member_required
 def admin_home(request):
     sustainable_chart_data = get_sustainable_chart_data()

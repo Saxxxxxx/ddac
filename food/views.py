@@ -30,9 +30,9 @@ def food_list(request):
     return render(request,'food_list.html',{'food_list':food_list,'create_food_form':create_food_form})
 
 
-def food_detail(request,pk):
-    food_detail = get_object_or_404(FoodSharingListing,pk=pk)
-    return render(request,'')
+def food_detail(request):
+    #food_detail = get_object_or_404(FoodSharingListing)
+    return render(request,'food_detail.html')
 
 @staff_member_required
 def admin_food(request):
