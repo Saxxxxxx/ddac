@@ -8,6 +8,11 @@ from .models import *
 from .forms import *
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
+from django.db import transaction
+from ddac_application.settings import AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,AWS_SESSION_TOKEN,ARN_USER
+from general.utils import SNSUtilities
+
+
 
 # Create your views here.
 def sign_up(request):
@@ -39,15 +44,11 @@ def view_profile(request):
 
 
 def custom_login_page(request):
-    print("HI")
     message = 'Hello'
     form = CustomLoginForm()  # Initialize the login form
     if request.method == 'POST':
-        print(request.POST)
         form = CustomLoginForm(request.POST)
         user = User.objects.all()
-        print(user)
-        print(form)
         if form.is_valid():
             user_object = User.objects.get(email=form.cleaned_data['email'])
             if user_object.is_active==False:
@@ -74,6 +75,12 @@ def custom_login_page(request):
 @staff_member_required
 def admin_users(request):
     users =User.objects.filter(Q(is_active=True)&Q(is_superuser=False)).order_by('id')
+    sns_utils = SNSUtilities(
+        region_name='us-east-1',
+        aws_access_key_id=AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+        aws_session_token=AWS_SESSION_TOKEN
+    )
     if request.method == 'POST':
         if 'createUser' in request.POST:
             userForm = CreateUserForm(request.POST)
@@ -85,30 +92,40 @@ def admin_users(request):
                 messages.success(request, 'Successful Registered.')
                 return redirect('admin_users')
         elif 'updateUser' in request.POST:
-            print(request.POST)
-            print(request.FILES)
-            print(request.POST.get('user_id'))
             current_user = get_object_or_404(User,pk=request.POST.get('user_id'))
+            email = current_user.email
             if request.POST.get('deleted_image'):
                 # Remove the avatar from current_user
                 current_user.avatar = None
                 current_user.save()  # Save the changes to the user object
-            print(current_user.avatar)
             mutable_post = request.POST.copy()
             mutable_post.pop('delete_image', None)  # Remove 'delete_image' from the copy
             mutable_post.pop('id', None)  # Remove 'delete_image' from the copy
             form = ModifyUserForm(mutable_post,request.FILES, instance=current_user)
             if form.is_valid():
-                print("YOU SAVED?")
-                form.save()
-                messages.success(request, 'User has been updated.')
+                try:
+                    with transaction.atomic():
+                        email_from_form = form.cleaned_data.get('email', None)
+                        if email_from_form != email:
+                            sns_utils.unsubscribe_endpoints_by_email(sns_utils.filter_subscriptions_by_email(sns_utils.get_list_of_subscriber(ARN_USER),email=email))
+                            sns_utils.subscribe_user_to_sns(email_from_form, ARN_USER)
+                        form.save()
+                        messages.success(request, 'User has been updated.')
+                except Exception as e:
+                    messages.warning(request, f'An error occurred: {str(e)}')
             return redirect('admin_users')
-            # print(request.POST)
         elif 'banUser' in request.POST:
-            print(request.POST.get('user_id'))
-            User.objects.get(id=request.POST.get('user_id')).delete()
-            messages.success(request, 'User has been banned.')
-            return redirect('admin_users')
+            try:
+                with transaction.atomic():
+                    ban_user = User.objects.get(id=request.POST.get('user_id'))
+                    ban_user.is_banned = True
+                    ban_user.save()
+                    sns_utils.unsubscribe_endpoints_by_email(sns_utils.filter_subscriptions_by_email(sns_utils.get_list_of_subscriber(ARN_USER),email=ban_user.email))
+                messages.success(request, 'User has been banned.')
+                return redirect('admin_users')
+            except Exception as e:
+                messages.warning(request, f'An error occurred: {str(e)}')
+                return redirect('admin_users')
     userForm = CreateUserForm()
     modifyUserForm = ModifyUserForm()
     return render(request,'admin_users.html',{'users':users,'userForm':userForm,'modifyUserForm':modifyUserForm})
@@ -116,18 +133,38 @@ def admin_users(request):
 @staff_member_required
 def admin_approve_users(request):
     users =User.objects.filter(is_active=False).order_by('id')
+    # Subscribe user to SNS topic
+    sns_utils = SNSUtilities(
+        region_name='us-east-1',
+        aws_access_key_id=AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+        aws_session_token=AWS_SESSION_TOKEN
+    )
     if request.method == 'POST':
-        print(request.POST)
         user_object = User.objects.get(pk=request.POST.get('user_id'))
         if 'approveUser' in request.POST:
-            user_object.is_active= True
-            user_object.save()
-            messages.success(request, 'User has been Approved.')
-            return redirect('admin_approve_users')
+            try:
+                with transaction.atomic():
+                    # Approve user
+                    user_object.is_active = True
+                    user_object.save()
+                    sns_utils.subscribe_user_to_sns(user_object.email, ARN_USER)
+                    # subscribe_user_to_sns(user_object)
+                messages.success(request, 'User has been Approved.')
+                return redirect('admin_approve_users')
+            except Exception as e:
+                messages.warning(request, f'An error occurred: {str(e)}')
+                return redirect('admin_approve_users')
+        
         elif 'rejectUser' in request.POST:
-            user_object.delete()
-            messages.success(request, 'User has been Rejected.')
-            return redirect('admin_approve_users')
+            try:
+                with transaction.atomic():
+                    user_object.delete()
+                messages.success(request, 'User has been Rejected.')
+                return redirect('admin_approve_users')
+            except Exception as e:
+                messages.warning(request, f'An error occurred: {str(e)}')
+                return redirect('admin_approve_users')
 
     return render(request,'admin_approve_users.html',{'users':users})
 
@@ -138,7 +175,6 @@ def get_users(request):
         try:
             user = User.objects.get(id=user_id)
             avatar_url = user.avatar.url if user.avatar else None  # Check if user.avatar exists
-            print(user.avatar)
             user_data = {
                 'id': user.id,
                 'first_name': user.first_name,
@@ -152,3 +188,4 @@ def get_users(request):
             return JsonResponse({'error': 'Listing not found'}, status=404)
     else:
         return JsonResponse({'error': 'Missing listing_id parameter'}, status=400)
+    

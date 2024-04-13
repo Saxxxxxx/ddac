@@ -1,6 +1,7 @@
 {% extends 'ddac_application/templates/admin_base.html' %}
 {%load static%}
 {%block content%}
+
 <div class="container mt-5">
     <h2 class="mb-4">Manage Food Sharing Listings</h2>
     <input type="text" id="searchInput" class="form-control mb-3" placeholder="Search listings...">
@@ -36,7 +37,7 @@
                 <td>
                     <div class="row"> <!-- Add margin-top for spacing between buttons -->
                         <div class="col text-center">
-                            <button class="btn btn-sm btn-info modify-btn" style="width: 100px;" data-bs-toggle="modal" id="modifyBtn" data-bs-target="#modifyFoodModal" data-listing-id="{{ listing.listing_id }}">Modify</button>
+                            <button class="btn btn-sm btn-info modify-btn text-white cursor-pointer" style="width: 100px;" data-bs-toggle="modal" id="modifyBtn" data-bs-target="#modifyFoodModal" data-listing-id="{{ listing.listing_id }}">Modify</button>
                         </div>
                     </div>
                     <div class="row mt-2 justify-content-center">
@@ -111,7 +112,7 @@
                 </div>
                 <div class="form-group m-3">
                     <label for="listingImages">Images</label>
-                    <input type="file" class="form-control-file" name="images" multiple>
+                    <input type="file" class="form-control-file" name="images" accept="image/*" multiple onchange="limitFiles(this)">
                 </div>
             </div>
             <div class="modal-footer">
@@ -189,7 +190,7 @@
                 <div class="form-group m-3">
                     <label for="listingImages">Images</label>
                     <div id="modalListingImagesContainer"></div>
-                    <input type="file" class="form-control-file" name="images" multiple>
+                    <input type="file" class="form-control-file" name="images" accept="image/*" multiple onchange="limitModifyFiles(this)">
                 </div>
                 <div class="form-group m-3" style="display:none;">
                     <input id="removedImage" name="removed-image" type="text"
@@ -226,10 +227,11 @@
     </div>
 </div>
 
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     let countriesData;
     let removedImages = [];
+    let numberOfImages;
     // Get the select element
     const statusSelect = document.getElementById('modalStatusSelect');
     
@@ -333,7 +335,7 @@
         imageWrapper.remove();
         // Add the removed image's UUID to the removedImages array
         removedImages.push(imageUUID);
-    
+        numberOfImages -= 1;
         // Update the value of the removedImages input field with the updated array
         document.getElementById('removedImage').value = JSON.stringify(removedImages);
     
@@ -350,7 +352,6 @@
             .then(data => {
                 // Update UI with listing data
                 if (data.listing_data) {
-                    console.log(data.listing_data)
                     removedImages=[]
                     document.getElementById('removedImage').value = ''
                     const modifyStateSelect = document.getElementById('modalStateSelect');
@@ -369,11 +370,12 @@
                     document.getElementById('modalStatusSelect').value = data.listing_data.status;
                     const imagesContainer = document.getElementById('modalListingImagesContainer')
                     imagesContainer.innerHTML = '';
+                    numberOfImages = 0
                     data.listing_data.image.forEach(image => {
                         const imgWrapper = document.createElement('div');
                         imgWrapper.classList.add('image-wrapper');
                         imgWrapper.setAttribute('data-uuid', image.uuid); // Set data-uuid attribute to image UUID
-                
+                        numberOfImages += 1;
                         const img = document.createElement('img');
                         img.src = image.url;
                         img.alt = "Image";
@@ -442,6 +444,28 @@
             // elementID.append(option);
         });
     }
+    function limitFiles(input) {
+        var files = input.files;
+        if (files.length > 3) {
+            alert("You can only upload up to 3 files.");
+            input.value = ''; // Clear the selected files
+        }
+    }
+    function limitModifyFiles(input) {
+        var files = input.files;
+        if (files.length+numberOfImages > 3) {
+            alert("You can only upload up to 3 files.");
+            input.value = ''; // Clear the selected files
+        }
+    }
+    $(document).ready(function(){
+        $('#searchInput').on('keyup', function(){
+            var searchText = $(this).val().toLowerCase();
+            $('#listingTableBody tr').filter(function(){
+                $(this).toggle($(this).text().toLowerCase().indexOf(searchText) > -1);
+            });
+        });
+    });
     </script>
 
 

@@ -1,10 +1,18 @@
 from django.contrib.admin.views.decorators import staff_member_required
-from django.shortcuts import render
+from django.shortcuts import render,get_object_or_404,redirect
 from sustainable.models import SustainableMarketplaceListing
 from account.models import User
 from food.models import FoodSharingListing
-from general.models import Country
+from general.models import Country,ScheduleMaintenance
 from django.http import JsonResponse
+from .forms import ScheduleMaintenanceForm,UpdateScheduleMaintenanceForm
+from django.contrib import messages
+from django.db import transaction
+from django.utils import timezone
+from ddac_application.settings import AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,AWS_SESSION_TOKEN,ARN_USER
+from general.utils import SNSUtilities
+
+
 
 # Create your views here.
 def home(request):
@@ -24,6 +32,89 @@ def admin_home(request):
     
     return render(request,'admin_home.html',context={'sustainable_chart_data':sustainable_chart_data,'user_chart_data':user_chart_data,'food_chart_data':food_chart_data})
 
+@staff_member_required
+def admin_maintenance(request):
+    maintenance =ScheduleMaintenance.objects.exclude(status='Done').order_by('time')
+    sns_utils = SNSUtilities(
+        region_name='us-east-1',
+        aws_access_key_id=AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+        aws_session_token=AWS_SESSION_TOKEN
+    )
+    if request.method == 'POST':
+        print(request.POST)
+        if 'create_schedule' in request.POST:
+            print("Hi")
+            form = ScheduleMaintenanceForm(request.POST)
+            if form.is_valid():
+                try:
+                    with transaction.atomic():
+                        form.save()
+                        # Retrieve the saved data from the form
+                        time = form.cleaned_data['time']
+                        description = form.cleaned_data['content']
+                        print(time)
+
+                        # Trigger SNS notification
+                        message = (
+                            f"Scheduled Maintenance:\n"
+                            f"Date: {time.strftime('%Y-%m-%d')}\n"  # Format the date as 'YYYY-MM-DD'
+                            f"Time: {time.strftime('%H:%M:%S')} (UTC+8)\n"  # Format the time in Singapore timezone
+                            f"Description: {description}"
+                        )
+                        subject = "Maintenance Scheduled"
+                        sns_utils.send_notification(message, subject, ARN_USER)
+                        messages.success(request, 'Successfully Scheduled for maintenance')
+
+                        return redirect('admin_maintenance')  # Redirect to a success page after form submission
+                except Exception as e:
+                    print(e)
+                    messages.warning(request, f'An error occurred: {str(e)}')
+                    return redirect('admin_maintenance')
+        elif 'in_progress_schedule'in request.POST:
+            schedule_maintenance = ScheduleMaintenance.objects.get(id=request.POST.get('in_progress_schedule_id'))
+            schedule_maintenance.status = "In Progress"
+            time = schedule_maintenance.time
+            description = schedule_maintenance.content
+             # Trigger SNS notification
+            message = (
+                f"Scheduled Maintenance is in progress:\n"
+                f"Date: {time.strftime('%Y-%m-%d')}\n"  # Format the date as 'YYYY-MM-DD'
+                f"Time: {time.strftime('%H:%M:%S')} (UTC+8)\n"  # Format the time in Singapore timezone
+                f"Description: {description}"
+            )
+            subject = "Maintenance In Progress"
+            sns_utils.send_notification(message, subject, ARN_USER)
+            schedule_maintenance.save()
+            messages.success(request, 'Updated status')
+
+            return redirect('admin_maintenance')  # Redirect to a success page after form submission
+        elif 'complete_schedule'in request.POST:
+            schedule_maintenance = ScheduleMaintenance.objects.get(id=request.POST.get('complete_schedule_id'))
+            schedule_maintenance.status = "Done"
+            time = schedule_maintenance.time
+            description = schedule_maintenance.content
+             # Trigger SNS notification
+            message = (
+                f"Scheduled Maintenance has been completed:\n"
+                f"Date: {time.strftime('%Y-%m-%d')}\n"  # Format the date as 'YYYY-MM-DD'
+                f"Time: {time.strftime('%H:%M:%S')} (UTC+8)\n"  # Format the time in Singapore timezone
+                f"Description: {description}"
+            )
+            subject = "Maintenance Completed"
+            sns_utils.send_notification(message, subject, ARN_USER)
+            schedule_maintenance.save()
+            messages.success(request, 'Updated status')
+
+            return redirect('admin_maintenance')  # Redirect to a success page after form submission
+
+        elif 'delete_schedule' in request.POST:
+            ScheduleMaintenance.objects.get(id=request.POST.get('delete_schedule_id')).delete()
+            messages.success(request, 'Schedule Deleted')
+            return redirect('admin_maintenance')
+    
+    form = ScheduleMaintenanceForm()
+    return render(request, 'admin_maintenance.html', {'form': form,'maintenances':maintenance})
 
 def get_sustainable_chart_data():
  # Calculate listing counts by category
@@ -126,3 +217,4 @@ def get_country(request):
             country_data['states'].append(state_data)
         country_list.append(country_data)
     return JsonResponse(country_list, safe=False)
+

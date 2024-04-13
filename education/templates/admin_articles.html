@@ -23,7 +23,7 @@
                 <td>
                     <div class="row"> <!-- Add margin-top for spacing between buttons -->
                         <div class="col text-center">
-                            <button class="btn btn-sm btn-info modify-btn" style="width: 100px;" data-bs-toggle="modal" id="modifyBtn" data-bs-target="#modifyArticleModal" data-listing-id="{{ header.article_header_id }}">Modify</button>
+                            <button class="btn btn-sm btn-info modify-btn text-white cursor-pointer" style="width: 100px;" data-bs-toggle="modal" id="modifyBtn" data-bs-target="#modifyArticleModal" data-listing-id="{{ header.article_header_id }}">Modify</button>
                         </div>
                     </div>
                     <div class="row mt-2 justify-content-center">
@@ -111,6 +111,7 @@
           </form>
     </div>
 </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const modifyButtons = document.querySelectorAll('.modify-btn');
@@ -154,5 +155,13 @@
                 console.error('Error fetching listing data:', error);
             });
     }
+    $(document).ready(function(){
+        $('#searchInput').on('keyup', function(){
+            var searchText = $(this).val().toLowerCase();
+            $('#articleTableBody tr').filter(function(){
+                $(this).toggle($(this).text().toLowerCase().indexOf(searchText) > -1);
+            });
+        });
+    });
 </script>
 {%endblock content%}

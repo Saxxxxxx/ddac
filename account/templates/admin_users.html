@@ -6,7 +6,6 @@
     <h2 class="mb-4">Manage Users</h2>
     <input type="text" id="searchInput" class="form-control mb-3" placeholder="Search users...">
     <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addUserModal" id="openUserModalLabel">Create User</button>
-    <!-- <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addUserModal">Add User</button> -->
     <div class="table-responsive">
         <table class="table table-bordered">
             <thead>
@@ -30,7 +29,7 @@
                     <td>
                         <div class="row"> <!-- Add margin-top for spacing between buttons -->
                             <div class="col text-center">
-                                <button class="btn btn-sm btn-success modify-btn" style="width: 100px;" data-bs-toggle="modal" id="modifyBtn" data-bs-target="#updateUserModal" data-listing-id="{{ user.id }}">Modify</button>
+                                <button class="btn btn-sm btn-info modify-btn text-white cursor-pointer" style="width: 100px;" data-bs-toggle="modal" id="modifyBtn" data-bs-target="#updateUserModal" data-listing-id="{{ user.id }}">Modify</button>
                             </div>
                         </div>
                         <div class="row mt-2 justify-content-center">
@@ -120,6 +119,7 @@
           </form>
     </div>
 </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
 var deleteCheckbox = document.getElementById('delete_checkbox');
 document.addEventListener('DOMContentLoaded', () => {
@@ -198,6 +198,15 @@ function handleRemoveImage() {
     imageWrapper.remove();
     deleteCheckbox.checked = true
 }
+
+$(document).ready(function(){
+    $('#searchInput').on('keyup', function(){
+        var searchText = $(this).val().toLowerCase();
+        $('#userTableBody tr').filter(function(){
+            $(this).toggle($(this).text().toLowerCase().indexOf(searchText) > -1);
+        });
+    });
+});
 
 </script>
 

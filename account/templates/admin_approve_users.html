@@ -88,7 +88,7 @@
           </form>
     </div>
 </div>
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const approveButtons = document.querySelectorAll('.approve-btn');
@@ -125,5 +125,13 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('rejectUserId').value = '';
     });
 })
+$(document).ready(function(){
+    $('#searchInput').on('keyup', function(){
+        var searchText = $(this).val().toLowerCase();
+        $('#userTableBody tr').filter(function(){
+            $(this).toggle($(this).text().toLowerCase().indexOf(searchText) > -1);
+        });
+    });
+});
 </script>
 {%endblock content%}
