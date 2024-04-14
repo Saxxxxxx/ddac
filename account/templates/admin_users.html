@@ -29,7 +29,8 @@
                     <td>
                         <div class="row"> <!-- Add margin-top for spacing between buttons -->
                             <div class="col text-center">
-                                <button class="btn btn-sm btn-info modify-btn text-white cursor-pointer" style="width: 100px;" data-bs-toggle="modal" id="modifyBtn" data-bs-target="#updateUserModal" data-listing-id="{{ user.id }}">Modify</button>
+                                {% comment %} <button class="btn btn-sm btn-info modify-btn text-white cursor-pointer" style="width: 100px;" data-bs-toggle="modal" id="modifyBtn" data-bs-target="#updateUserModal" data-listing-id="{{ user.id }}">Modify</button> {% endcomment %}
+                                <button class="btn btn-sm btn-info modify-btn text-white cursor-pointer" style="width: 100px;" id="modifyBtn" data-listing-id="{{ user.id }}">Modify</button>
                             </div>
                         </div>
                         <div class="row mt-2 justify-content-center">
@@ -46,7 +47,13 @@
         </table>
     </div>
 </div>
-
+<div id="loading-spinner">
+    <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+<!-- Overlay element -->
+<div id="overlay"></div>
 
 <!-- Ban Confirmation Modal -->
 
@@ -127,8 +134,10 @@ document.addEventListener('DOMContentLoaded', () => {
     modifyButtons.forEach(button => {
         button.addEventListener('click', () => {
             const itemId = button.getAttribute('data-listing-id');
-            console.log(itemId)
+            $('#overlay').hide();
+            $('#loading-spinner').hide();
             getUser(itemId);
+
         });
     });
     const deleteButtons = document.querySelectorAll('.ban-btn');
@@ -185,6 +194,9 @@ function getUser(userId) {
             } else {
                 console.error('User not found:', data.error);
             }
+            $('#overlay').hide();
+            $('#loading-spinner').hide();
+            $('#updateUserModal').modal('show')
         })
         .catch(error => {
             console.error('Error fetching user data:', error);

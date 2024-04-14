@@ -11,17 +11,14 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
-import environ
+from dotenv import load_dotenv
+import os
 
-env = environ.Env(
-    DEBUG=(bool,False)
-)
-
-
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-environ.Env.read_env(BASE_DIR/'.env')
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -30,7 +27,7 @@ environ.Env.read_env(BASE_DIR/'.env')
 SECRET_KEY = 'django-insecure-(t)u9!s!3!&sh^*f@$nppgdw1ig24@cfb6_c!3-!hs0q7k4e+='
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1']
 
@@ -103,7 +100,7 @@ WSGI_APPLICATION = 'ddac_application.wsgi.application'
 #             'USER': 'admin',
 #             'PASSWORD': '',
 #             'HOST': 'localhost',
-#             'PORT': '5440',
+#             'PORT': '5440',image.png
 #     }
 # }
 
@@ -169,12 +166,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'custom_login_page'
 
-ARN_USER= env('ARN_USER')
-AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
-AWS_SESSION_TOKEN=env('AWS_SESSION_TOKEN')
-AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
-AWS_S3_REGION_NAME = env('AWS_S3_REGION_NAME')  # e.g., us-east-1
+ARN_USER= os.environ.get('ARN_USER')
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_SESSION_TOKEN=os.environ.get('AWS_SESSION_TOKEN')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME')  # e.g., us-east-1
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 
 # For serving static files directly from S3

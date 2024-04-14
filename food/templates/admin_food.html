@@ -37,7 +37,8 @@
                 <td>
                     <div class="row"> <!-- Add margin-top for spacing between buttons -->
                         <div class="col text-center">
-                            <button class="btn btn-sm btn-info modify-btn text-white cursor-pointer" style="width: 100px;" data-bs-toggle="modal" id="modifyBtn" data-bs-target="#modifyFoodModal" data-listing-id="{{ listing.listing_id }}">Modify</button>
+                            <button class="btn btn-sm btn-info modify-btn text-white cursor-pointer" style="width: 100px;" id="modifyBtn" data-listing-id="{{ listing.listing_id }}">Modify</button>
+                            {% comment %} <button class="btn btn-sm btn-info modify-btn text-white cursor-pointer" style="width: 100px;" data-bs-toggle="modal" id="modifyBtn" data-bs-target="#modifyFoodModal" data-listing-id="{{ listing.listing_id }}">Modify</button> {% endcomment %}
                         </div>
                     </div>
                     <div class="row mt-2 justify-content-center">
@@ -52,7 +53,13 @@
     </div>
 
 </div>
-
+<div id="loading-spinner">
+    <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+<!-- Overlay element -->
+<div id="overlay"></div>
 <div id="addListingModal" class="modal" tabindex="-1">
     <div id="dialog" class="modal-dialog">
         <form method="POST" class="modal-content" enctype="multipart/form-data">
@@ -317,6 +324,8 @@
         modifyButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const itemId = button.getAttribute('data-listing-id');
+                $('#overlay').show();
+                $('#loading-spinner').show();
                 getListing(itemId);
             });
         });
@@ -391,6 +400,9 @@
                         imgWrapper.appendChild(removeButton);
                         imagesContainer.appendChild(imgWrapper);
                     })
+                    $('#overlay').hide();
+                    $('#loading-spinner').hide();
+                    $('#modifyFoodModal').modal('show')
                 } else {
                     console.error('Listing not found:', data.error);
                 }
