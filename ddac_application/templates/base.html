@@ -57,9 +57,11 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'education_list' %}">Educational Resources</a>
                             </li>
+                            {% if user.is_authenticated %}
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'view_profile' %}">Profile</a>
                             </li>
+                            {% endif %}
                             
                         </ul>
                     </div>

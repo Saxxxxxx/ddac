@@ -28,6 +28,7 @@ SECRET_KEY = 'django-insecure-(t)u9!s!3!&sh^*f@$nppgdw1ig24@cfb6_c!3-!hs0q7k4e+=
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1']
 
@@ -107,10 +108,10 @@ WSGI_APPLICATION = 'ddac_application.wsgi.application'
 DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'ddac_best',
-            'USER': 'admin_123',
-            'PASSWORD': 'admin_123',
-            'HOST': 'ddac-assm.c52e4ck2g5ru.us-east-1.rds.amazonaws.com',
+            'NAME': 'sustainabledb',
+            'USER': 'cloudadmin',
+            'PASSWORD': '12345678',
+            'HOST': 'clouddb.c1ykq6y6m32e.us-east-1.rds.amazonaws.com',
             'PORT': '5432',
     }
 }

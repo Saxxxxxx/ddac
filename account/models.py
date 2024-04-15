@@ -1,8 +1,9 @@
 import uuid
-from django.contrib.auth.models import AbstractBaseUser,PermissionsMixin, UserManager, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.db import models
 from django.utils import timezone
 from django.core.validators import RegexValidator
+
 # Create your models here.
 
 class UserManager(BaseUserManager):
@@ -58,3 +59,5 @@ class User(AbstractBaseUser,PermissionsMixin):
     USERNAME_FIELD='email'
     EMAIL_FIELD='email'
     REQUIRED_FIELDS=[]
+
+    

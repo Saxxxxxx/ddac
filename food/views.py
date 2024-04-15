@@ -11,23 +11,116 @@ from django.db.models import Q
 from django.db import transaction
 import re
 
+
+def filter_view(request):
+    data = FoodSharingListing.objects.all()
+
+    # Get filter parameters from the request
+    category = request.GET.get('category')
+    location = request.GET.get('location')
+    status = request.GET.get('status')
+
+    # Filter data based on provided parameters
+    if category:
+        data = data.filter(category=category)
+    if location:
+        data = data.filter(location=location)
+    if status:
+        data = data.filter(status=status)
+
+    # Context data to pass to the template
+    context = {
+        'data': data,
+        'selected_category': category,
+        'selected_location': location,
+        'selected_status': status,
+    }
+
+    return render(request, 'food_list.html', {'data': data, 'selected_category': category, 'selected_location': location, 'selected_status': status})
 # Create your views here.
 def food_list(request):
+    images = []
     food_list = FoodSharingListing.objects.filter(Q(deleted=False) | Q(deleted__isnull=True))
+    if request.GET.get('category'):
+        category = request.GET.get('category')
+        print(category) 
+        food_list = food_list.filter(category_id__category_name=category)
+
+    if request.GET.get('location'):
+        location = request.GET.get('location')
+        food_list = food_list.filter(state_id__state_name=location)
+    if request.GET.get('status'):
+        status = request.GET.get('status')
+        food_list = food_list.filter(status=status)
     print(food_list)
+    for listing in food_list:
+    # Accessing all images associated with the listing
+        images = listing.images.all()
+    # Looping through each image
+        for image in images:
+        # Accessing image attributes
+            image_url = image.image
+            print(image_url)
+        # Do whatever you need with the image_id and image_url
     create_food_form = ''
     #NEED TO CHECK IF USER IS LOGIN, IF NOT LOGIN CANT CREATE 
     if request.method == 'POST':
-        if 'createFoodFormButton' in request.POST:
-            create_food_form = FoodSharingListingForm(request.POST)
-            if create_food_form.is_valid():
-                # Save the form data
-                create_food_form.save(commit=False)
+        if 'addListing' in request.POST:
+            # create_food_form = FoodSharingListingForm(request.POST)
+            # if create_food_form.is_valid():
+            #     # Save the form data
+            #     create_food_form.save(commit=False)
+            print(request.POST)
+            user = request.user  # Assuming user is authenticated
+            title = request.POST.get('title')
+            description = request.POST.get('description')
+            price = request.POST.get('price')
+            category_id = request.POST.get('category')
+            state_id = request.POST.get('state')
+            country_id = request.POST.get('country')
+            images = request.FILES.getlist('images')
+            street_address = request.POST.get('street_address')
+            postal_code = request.POST.get('postal_code')
+            held_date = request.POST.get('held_date')
+            held_date = held_date if held_date != '' else None
+            
+            expiration_date = request.POST.get('expiration_date')
+            expiration_date = expiration_date if expiration_date != '' else None
+            status = 'Available'  # You can set the status as per your requirement
+
+            # Retrieve or create State, Country, and Category instances
+            state = get_object_or_404(State, uuid=state_id)
+            country = get_object_or_404(Country, uuid=country_id)
+            category = get_object_or_404(FoodSharingCategory, uuid=category_id)
+
+            # # Create SustainableMarketplaceListing instance
+            sustainable_listing = FoodSharingListing.objects.create(
+                user=user,
+                title=title,
+                description=description,
+                price=price,
+                state_id=state,
+                country_id=country,
+                category_id=category,
+                status=status,
+                street_address = street_address,
+                postal_code = postal_code,
+                held_date = held_date,
+                expiration_date = expiration_date,
+                creator=request.user
+            )
+            # Add images to the listing
+            for image in images:
+                sustainable_listing.images.add(FoodSharingListingImage.objects.create(image=image))
+
+            # Return a success response
+            messages.success(request, 'Successfully Created Listing')
+            return redirect('food_list')
         else:
             form = FoodSharingListingForm(None, request.POST)
     else:
         create_food_form = FoodSharingListingForm()
-    return render(request,'food_list.html',{'food_list':food_list,'create_food_form':create_food_form})
+    return render(request,'food_list.html',{'food_list':food_list,'images': images, 'create_food_form':create_food_form})
 
 
 def food_detail(request):

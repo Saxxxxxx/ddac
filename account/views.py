@@ -11,6 +11,8 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.db import transaction
 from ddac_application.settings import AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,AWS_SESSION_TOKEN,ARN_USER
 from general.utils import SNSUtilities
+from food.models import FoodSharingListing
+from sustainable.models import SustainableMarketplaceListing
 
 
 
@@ -34,13 +36,16 @@ def sign_up(request):
     return render(request,'registration/signup.html',{'form':form})
 
 def view_profile(request):
+    print(request.user)
+    food_list = FoodSharingListing.objects.filter(Q(Q(deleted=False) | Q(deleted__isnull=True)) & Q(user=request.user))
+    sustainable_list = SustainableMarketplaceListing.objects.filter(Q(deleted=False) | Q(deleted__isnull=True) & Q(user=request.user))
     #LOAD PROFILE FROM REQUEST USER
     #ONCE LOAD DO MULTIPLE POST ON MODIFY PROFILE, MODIFY SUSTAINABLE LISTING, AND MODIFY FOOD LIST
     if request.method == 'POST':
         return redirect('login')
     else:
         edit_profile_form = EditProfileForm()
-    return render(request,'profile.html',{'edit_profile_form':edit_profile_form})
+    return render(request,'profile.html',{'edit_profile_form':edit_profile_form, 'food_list':food_list, 'sustainable_list':sustainable_list})
 
 
 def custom_login_page(request):

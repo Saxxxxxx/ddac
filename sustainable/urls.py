@@ -10,5 +10,6 @@ urlpatterns = [
     path('sustainable/category',views.get_categories,name='get_sustainable_category'),
     path('sustainable/get',views.get_categories,name='get_sustainable_category'),
     path('get-sustainable-listing-data/', views.get_listing_data, name='get_sustainable_listing_data'),
+    path('filter/', views.filter_view, name='filter_view')
     
 ]
