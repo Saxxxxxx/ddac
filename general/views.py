@@ -10,7 +10,7 @@ from django.contrib import messages
 from django.db import transaction
 from django.utils import timezone
 from ddac_application.settings import AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,AWS_SESSION_TOKEN,ARN_USER
-from general.utils import SNSUtilities
+from ddac_application.aws import SNSUtilities
 
 
 
@@ -35,12 +35,7 @@ def admin_home(request):
 @staff_member_required
 def admin_maintenance(request):
     maintenance =ScheduleMaintenance.objects.exclude(status='Done').order_by('time')
-    sns_utils = SNSUtilities(
-        region_name='us-east-1',
-        aws_access_key_id=AWS_ACCESS_KEY_ID,
-        aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-        aws_session_token=AWS_SESSION_TOKEN
-    )
+    sns_utils = SNSUtilities
     if request.method == 'POST':
         print(request.POST)
         if 'create_schedule' in request.POST:
@@ -63,7 +58,7 @@ def admin_maintenance(request):
                             f"Description: {description}"
                         )
                         subject = "Maintenance Scheduled"
-                        sns_utils.send_notification(message, subject, ARN_USER)
+                        SNSUtilities.send_notification(message, subject, ARN_USER)
                         messages.success(request, 'Successfully Scheduled for maintenance')
 
                         return redirect('admin_maintenance')  # Redirect to a success page after form submission
@@ -84,7 +79,7 @@ def admin_maintenance(request):
                 f"Description: {description}"
             )
             subject = "Maintenance In Progress"
-            sns_utils.send_notification(message, subject, ARN_USER)
+            SNSUtilities.send_notification(message, subject, ARN_USER)
             schedule_maintenance.save()
             messages.success(request, 'Updated status')
 
@@ -102,14 +97,23 @@ def admin_maintenance(request):
                 f"Description: {description}"
             )
             subject = "Maintenance Completed"
-            sns_utils.send_notification(message, subject, ARN_USER)
+            SNSUtilities.send_notification(message, subject, ARN_USER)
             schedule_maintenance.save()
             messages.success(request, 'Updated status')
 
             return redirect('admin_maintenance')  # Redirect to a success page after form submission
 
         elif 'delete_schedule' in request.POST:
-            ScheduleMaintenance.objects.get(id=request.POST.get('delete_schedule_id')).delete()
+            schedule_maintenance = ScheduleMaintenance.objects.get(id=request.POST.get('delete_schedule_id'))
+             # Trigger SNS notification
+            message = (
+                f"Scheduled Maintenance has been aborted:\n"
+                f"Date Time: {schedule_maintenance.time} (UTC+8)\n"
+                f"Description: {schedule_maintenance.content}"
+            )
+            subject="Scheduled Maintenace Aborted"
+            SNSUtilities.send_notification(message, subject, ARN_USER)
+            schedule_maintenance.delete()
             messages.success(request, 'Schedule Deleted')
             return redirect('admin_maintenance')
     

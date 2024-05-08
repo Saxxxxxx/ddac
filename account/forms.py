@@ -1,3 +1,7 @@
+from django.db import transaction
+
+import base64
+
 from django import forms
 
 from .models import User
@@ -7,6 +11,12 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import AuthenticationForm, UsernameField
 
 from django import forms
+
+import requests
+
+from ddac_application.aws import S3AWS
+
+
 
 # from django import forms
 
@@ -64,10 +74,47 @@ class ModifyUserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('id','username', 'email', 'first_name', 'last_name', 'avatar')
-# class SignupForm(forms.ModelForm):
-#     email = forms.EmailField(
-#         required=True,
-#     )
-#     class Meta:
-#         model = CustomNonApprovedUser
-#         fields = ('username','email','first_name','last_name','password1','password2','phone_number')
+
+    def __init__(self, *args, **kwargs):
+        self.delete_image = kwargs.pop('delete_image', None)  # Access the custom argument
+        super(ModifyUserForm, self).__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        user = super(ModifyUserForm, self).save(commit=False)
+        if commit:
+            user.save()
+        uploaded_avatar = self.cleaned_data.get('avatar')
+        deleted_avatar_data_list=[]
+        if self.delete_image is not None:
+            deleted_file_name = self.delete_image.name.split("/")[-1]
+            deleted_file_location = User._meta.get_field('avatar').upload_to
+            deleted_avatar_data = {'file_name': deleted_file_name, 'file_location': deleted_file_location}
+            deleted_avatar_data_list.append(deleted_avatar_data)
+        if user.avatar == self.delete_image:
+            if self.delete_image is not None:
+                S3AWS.delete_s3_to_api(deleted_avatar_data_list)
+                user.avatar = None
+                user.save()
+        # Your API call to upload the avatar goes here
+        elif uploaded_avatar is not None:
+            avatar_data_list = []
+            # Append the short UUID to the basename and rejoin with the extension
+            new_file_name = user.avatar.name.split("/")[-1]
+            file_location = User._meta.get_field('avatar').upload_to
+            # Example API call to upload avatar
+            encoded_image = base64.b64encode(uploaded_avatar.read()).decode('utf-8')
+            avatar_data = {'file_name': new_file_name, 'file_location': file_location, 'image_data': encoded_image}
+            avatar_data_list.append(avatar_data)
+            if self.delete_image is not None:
+                try:
+                    S3AWS.update_s3_to_api(avatar_data_list,deleted_avatar_data_list)
+                except Exception as e:
+                    # Handle API call errors
+                    raise Exception(f"Error uploading avatar to API: {e}")
+            else:
+                try:
+                    S3AWS.upload_s3_to_api(avatar_data_list)
+                except Exception as e:
+                    # Handle API call errors
+                    raise Exception(f"Error uploading avatar to API: {e}")
+

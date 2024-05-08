@@ -10,6 +10,8 @@ from django.contrib import messages
 from django.db.models import Q
 from django.db import transaction
 import re
+import base64
+from ddac_application.aws import S3AWS
 
 
 def filter_view(request):
@@ -180,7 +182,6 @@ def admin_food(request):
             return redirect('admin_food')
         elif 'modifyListing' in request.POST:
             food_listing = FoodSharingListing.objects.get(listing_id=request.POST.get('listing_id'))
-            print(request.POST.get('title'))
             food_listing.title = request.POST.get('title')
             food_listing.description = request.POST.get('description')
             food_listing.price = request.POST.get('price')
@@ -202,19 +203,36 @@ def admin_food(request):
 
             # Regular expression to match UUID format
             uuid_pattern = r'[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
-
             # Find all UUIDs in the string
             matches = re.findall(uuid_pattern, removed_image_data)
             with transaction.atomic():
                 # Print each extracted UUID
-                for uuid in matches:
-                    image = FoodSharingListingImage.objects.get(uuid=uuid)
-                    image.delete()
-                for image in images:
-                    food_listing.images.add(FoodSharingListingImage.objects.create(image=image))
-                food_listing.save()
-            # print(request.POST)
-                # Return a success response
+                file_location = FoodSharingListingImage._meta.get_field('image').upload_to
+                deleted_file_array = []
+                upload_file_array = []
+                if matches is not None:
+                    for uuid in matches:
+                        image = FoodSharingListingImage.objects.get(uuid=uuid)
+                        file_name = image.image.name.split("/")[-1]
+                        deleted_file = {'file_name': file_name, 'file_location': file_location}
+                        deleted_file_array.append(deleted_file)
+                        image.delete()
+                    food_listing.save()
+                if images is not None:
+                    for image in images:
+                        food_list_image = FoodSharingListingImage.objects.create(image=image)
+                        food_listing.images.add(food_list_image)
+                        file_name = food_list_image.image.name.split("/")[-1]
+                        encoded_image = base64.b64encode(image.read()).decode('utf-8')
+                        upload_file = {'file_name': file_name, 'file_location': file_location, 'image_data': encoded_image}
+                        upload_file_array.append(upload_file)
+                    food_listing.save()
+                if deleted_file_array and upload_file_array:
+                    S3AWS.update_s3_to_api(upload_file_array,deleted_file_array)
+                elif deleted_file_array:
+                    S3AWS.delete_s3_to_api(deleted_file_array)
+                elif upload_file_array:
+                    S3AWS.upload_s3_to_api(upload_file_array)
             messages.success(request, 'Successfully Modify Listing')
             return redirect('admin_food')
         elif 'deleteListing' in request.POST:

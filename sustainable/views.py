@@ -10,6 +10,8 @@ from django.http import JsonResponse
 from django.contrib import messages
 from django.db import transaction
 from django.template.loader import render_to_string
+import base64
+from ddac_application.aws import S3AWS
 
 import re
 # Create your views here.
@@ -180,14 +182,34 @@ def admin_sustainable(request):
             matches = re.findall(uuid_pattern, removed_image_data)
             with transaction.atomic():
                 # Print each extracted UUID
-                for uuid in matches:
-                    image = SustainableMarketplaceListingImage.objects.get(uuid=uuid)
-                    image.delete()
-                for image in images:
-                    sustainable_listing.images.add(SustainableMarketplaceListingImage.objects.create(image=image))
-                sustainable_listing.save()
-            # print(request.POST)
-                # Return a success response
+                file_location = SustainableMarketplaceListingImage._meta.get_field('image').upload_to
+                deleted_file_array = []
+                upload_file_array = []
+                print(matches)
+                print(images)
+                if matches is not None:
+                    for uuid in matches:
+                        image = SustainableMarketplaceListingImage.objects.get(uuid=uuid)
+                        file_name = image.image.name.split("/")[-1]
+                        deleted_file = {'file_name': file_name, 'file_location': file_location}
+                        deleted_file_array.append(deleted_file)
+                        image.delete()
+                    sustainable_listing.save()
+                if images is not None:
+                    for image in images:
+                        sustainable_list_image = SustainableMarketplaceListingImage.objects.create(image=image)
+                        sustainable_listing.images.add(sustainable_list_image)
+                        file_name = sustainable_list_image.image.name.split("/")[-1]
+                        encoded_image = base64.b64encode(image.read()).decode('utf-8')
+                        upload_file = {'file_name': file_name, 'file_location': file_location, 'image_data': encoded_image}
+                        upload_file_array.append(upload_file)
+                    sustainable_listing.save()
+                if deleted_file_array and upload_file_array:
+                    S3AWS.update_s3_to_api(upload_file_array,deleted_file_array)
+                elif deleted_file_array:
+                    S3AWS.delete_s3_to_api(deleted_file_array)
+                elif upload_file_array:
+                    S3AWS.upload_s3_to_api(upload_file_array)
             messages.success(request, 'Successfully Modify Listing')
             return redirect('admin_sustainable')
         elif 'deleteListing' in request.POST:
