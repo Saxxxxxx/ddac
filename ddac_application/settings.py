@@ -51,7 +51,7 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 MIDDLEWARE = [
-    'django_aws_xray.middleware.XRayMiddleware'
+    'django_aws_xray.middleware.XRayMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -61,7 +61,13 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-
+AWS_XRAY_PATCHES = [
+    'django_aws_xray.patches.cache',
+    'django_aws_xray.patches.redis',
+    'django_aws_xray.patches.db',
+    'django_aws_xray.patches.requests',
+    'django_aws_xray.patches.templates',
+]
 
 ROOT_URLCONF = 'ddac_application.urls'
 
@@ -204,17 +210,8 @@ MEDIA_URL = f'{AWS_S3_URL_PROTOCOL}//{AWS_S3_CUSTOM_DOMAIN}/media/'
 
 DEFAULT_FILE_STORAGE = 'ddac_application.custom.ReadOnlyS3Boto3Storage'
 
-
-AWS_XRAY_PATCHES = [
-    'django_aws_xray.patches.cache',
-    'django_aws_xray.patches.redis',
-    'django_aws_xray.patches.db',
-    'django_aws_xray.patches.requests',
-    'django_aws_xray.patches.templates',
-]
-
 AWS_XRAY_TRACING_NAME = 'YOUR_APP_NAME'
 AWS_XRAY_SAMPLING_RATE = 100
 AWS_XRAY_EXCLUDED_PATHS = []
-AWS_XRAY_HOST = 'Your_XRAY_DAEMON_HOST_ADDRESS'
-AWS_XRAY_PORT = 'Your_XRAY_DAEMON_PORT'
+AWS_XRAY_HOST = '127.0.0.1'
+AWS_XRAY_PORT = '2000'
