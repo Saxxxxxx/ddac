@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
     'storages',
-    'aws_xray_sdk.ext.django',
+    'django_aws_xray',
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
@@ -51,7 +51,7 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 MIDDLEWARE = [
-    'aws_xray_sdk.ext.django.middleware.XRayMiddleware',
+    'django_aws_xray.middleware.XRayMiddleware'
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -205,12 +205,16 @@ MEDIA_URL = f'{AWS_S3_URL_PROTOCOL}//{AWS_S3_CUSTOM_DOMAIN}/media/'
 DEFAULT_FILE_STORAGE = 'ddac_application.custom.ReadOnlyS3Boto3Storage'
 
 
-XRAY_RECORDER = {
-    'AUTO_INSTRUMENT': True,
-    'AWS_XRAY_CONTEXT_MISSING': 'LOG_ERROR',
-    'AWS_XRAY_DAEMON_ADDRESS': '127.0.0.1:5000',
-    'AWS_XRAY_TRACING_NAME': 'My application',
-    'PLUGINS': ('EC2Plugin'),
-    'SAMPLING': False,
-}
+AWS_XRAY_PATCHES = [
+    'django_aws_xray.patches.cache',
+    'django_aws_xray.patches.redis',
+    'django_aws_xray.patches.db',
+    'django_aws_xray.patches.requests',
+    'django_aws_xray.patches.templates',
+]
 
+AWS_XRAY_TRACING_NAME = 'YOUR_APP_NAME'
+AWS_XRAY_SAMPLING_RATE = 100
+AWS_XRAY_EXCLUDED_PATHS = []
+AWS_XRAY_HOST = 'Your_XRAY_DAEMON_HOST_ADDRESS'
+AWS_XRAY_PORT = 'Your_XRAY_DAEMON_PORT'
