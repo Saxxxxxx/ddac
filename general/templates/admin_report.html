@@ -1,0 +1,27 @@
+{% extends 'ddac_application/templates/admin_base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Report Form</h2>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>User ID</th>
+                    <th>Error Listing</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for message in reportdata %}
+                <tr>
+                    <td>{{ message.user_name }}</td>
+                    <td>{{ message.error_listing }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock content %}

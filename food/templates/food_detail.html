@@ -157,11 +157,13 @@
                             <li>Excepteur sint</li>
                         </ul> -->
 
-                        <form action="" method="POST">
+                        <form method="POST">
+                            {% csrf_token %} 
                             <input type="hidden" name="product-title" value="Activewear">
                             <div class="row pb-3">
                                 <div class="col d-grid">
                                     <button type="submit" class="btn btn-success btn-lg" name="submit" value="buy">Contact</button>
+                                    <button type="submit" class="btn btn-danger btn-lg" name="report">Report</button>
                                     <!-- Contact Through Whatsapp -->
                                 </div>
                                 <div class="col d-grid">

@@ -11,6 +11,8 @@ from django.db import transaction
 from django.utils import timezone
 from ddac_application.settings import AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,AWS_SESSION_TOKEN,ARN_USER
 from ddac_application.aws import SNSUtilities
+import requests
+import json
 
 
 
@@ -119,6 +121,31 @@ def admin_maintenance(request):
     
     form = ScheduleMaintenanceForm()
     return render(request, 'admin_maintenance.html', {'form': form,'maintenances':maintenance})
+
+
+def report_detail(request):
+    if request.method == 'GET':
+        try:
+            # API endpoint for receiving messages from SQS through Lambda
+            api_url = 'https://wr4cavs302.execute-api.us-east-1.amazonaws.com/foodlistingReceiveFunction'
+            
+            # Make a GET request to the API endpoint
+            response = requests.get(api_url)
+            response.raise_for_status()  # Raise an exception if the API call fails
+
+            print("API Response:", response.json())
+            
+            # Parse the response body to extract the messages
+            messages = response.json()['messages']
+            
+            # Render the template with the messages
+            return render(request, 'admin_report.html', {'reportdata': messages})
+        
+        except Exception as e:
+            # Handle any exceptions
+            return render(request, 'admin_report.html', {'error_message': str(e)})
+
+
 
 def get_sustainable_chart_data():
  # Calculate listing counts by category

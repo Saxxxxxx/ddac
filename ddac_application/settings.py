@@ -20,7 +20,7 @@ SECRET_KEY = 'django-insecure-(t)u9!s!3!&sh^*f@$nppgdw1ig24@cfb6_c!3-!hs0q7k4e+=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','54.165.130.156']
+ALLOWED_HOSTS = ['*']
 
 # CHANGE DEFAULT USER MODEL
 AUTH_USER_MODEL = 'account.User'
@@ -51,7 +51,7 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 MIDDLEWARE = [
-    'django_aws_xray.middleware.XRayMiddleware',
+    ##'django_aws_xray.middleware.XRayMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

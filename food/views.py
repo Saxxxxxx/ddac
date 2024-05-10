@@ -12,6 +12,8 @@ from django.db import transaction
 import re
 import base64
 from ddac_application.aws import S3AWS
+import requests
+import json
 
 
 def filter_view(request):
@@ -126,6 +128,16 @@ def food_list(request):
 
 
 def food_detail(request):
+    if request.method == 'POST':
+        print(request.POST)
+        if 'report' in request.POST:
+            print(request.POST)
+            user = request.user
+            api_url = 'https://wr4cavs302.execute-api.us-east-1.amazonaws.com/foodlistingFunction'
+            headers = {'Content-Type': 'application/json'}
+            response = requests.post(api_url, headers=headers, data=json.dumps({'user_id':user.id}))
+            response.raise_for_status()  # Raise an exception if the API call fails
+
     #food_detail = get_object_or_404(FoodSharingListing)
     return render(request,'food_detail.html')
 
